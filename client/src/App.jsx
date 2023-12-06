@@ -38,15 +38,17 @@ function App() {
   function onSearch(id) {
     const characterId = characters.filter(char => char.id === Number(id))
     if (characterId.length) { return alert(`El personaje ${characterId[0].name} ya existe`) }
-    axios(`https://rickandmortyapi.com/api/character/${id}`).then(
-      ({ data }) => {
-        if (data.name) {
-          setCharacters([...characters, data]);
-        } else {
-          window.alert('¡No hay personajes con este ID!');
+    //axios(`https://rickandmortyapi.com/api/character/${id}`)
+    axios(`http://localhost:3001/rickandmorty/character/${id}`)
+      .then(
+        ({ data }) => {
+          if (data.name) {
+            setCharacters([...characters, data]);
+          } else {
+            window.alert('¡No hay personajes con este ID!');
+          }
         }
-      }
-    );
+      );
     navigate("/home")
   }
   const onClose = (id) => {
