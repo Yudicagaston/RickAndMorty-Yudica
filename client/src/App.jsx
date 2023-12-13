@@ -17,39 +17,46 @@ function App() {
   const navigate = useNavigate();
   const location = useLocation();
   const [access, setAccess] = useState(false);
-  const EMAIL = 'gastonyudica1@gmail.com';
-  const PASSWORD = '1234567';
+  // const EMAIL = 'gastonyudica1@gmail.com';
+  // const PASSWORD = '1234567';
   const dispatch = useDispatch()
   function logout() {
     setAccess(false)
   }
-  function login(userData) {
-    if (userData.password === PASSWORD && userData.email === EMAIL) {
-      setAccess(true);
-      navigate('/home');
+  async function login(userData) {
+    try {
+      const { email, password } = userData;
+      const URL = 'http://localhost:3001/rickandmorty/login/';
+      const { data } = await axios(URL + `?email=${email}&password=${password}`)
+      const { access } = data;
+      if (access) {
+        setAccess(access);
+        navigate('/home');
+      } else { alert("CREDENCIALES INCORRECTAS!!") }
+
+    } catch (error) {
+      alert(error.message)
     }
-    else { alert("CREDENCIALES INCORRECTAS!!") }
   }
   useEffect(() => {
-    //!access && navigate('/');
-    !access && navigate('/home');
+    !access && navigate('/');
+    //!access && navigate('/home');
   }, [access]);
 
-  function onSearch(id) {
-    const characterId = characters.filter(char => char.id === Number(id))
-    if (characterId.length) { return alert(`El personaje ${characterId[0].name} ya existe`) }
-    //axios(`https://rickandmortyapi.com/api/character/${id}`)
-    axios(`http://localhost:3001/rickandmorty/character/${id}`)
-      .then(
-        ({ data }) => {
-          if (data.name) {
-            setCharacters([...characters, data]);
-          } else {
-            window.alert('¡No hay personajes con este ID!');
-          }
-        }
-      );
-    navigate("/home")
+  async function onSearch(id) {
+    try {
+      const characterId = characters.filter(char => char.id === Number(id))
+      if (characterId.length) { return alert(`El personaje ${characterId[0].name} ya existe`) }
+      const { data } = await axios(`http://localhost:3001/rickandmorty/character/${id}`)
+      if (data.name) {
+        setCharacters([...characters, data])
+        navigate("/home")
+      } else {
+        window.alert('¡No hay personajes con este ID!');
+      }
+    } catch (error) {
+      window.alert('¡No hay personajes con este ID!')
+    }
   }
   const onClose = (id) => {
     setCharacters(characters.filter(char => char.id !== Number(id)))

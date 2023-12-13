@@ -9,17 +9,14 @@ export default function reducer(state = initialState, { type, payload }) {
         case ADD_FAV:
             return {
                 ...state,
-                allCharacters: [...state.myFavorites, payload],
-                myFavorites: [...state.myFavorites, payload]
+                allCharacters: payload,
+                myFavorites: payload
             }
         case REMOVE_FAV:
-            const filteredChar = state.allCharacters.filter(
-                favorite => favorite.id !== Number(payload)
-            )
             return {
                 ...state,
-                myFavorites: filteredChar,
-                allCharacters: filteredChar
+                myFavorites: payload,
+                allCharacters: payload
             }
         case FILTER:
             if (payload === "All") return { ...state, myFavorites: state.allCharacters }
